@@ -191,6 +191,23 @@
 
                         switch (first['normal_account_level'])
                         {
+                            case 2:
+                            {
+                                $("#normal_account_level").text('2(羊毛黑名单)');
+                                break;
+                            }
+                            case 3:
+                            {
+                                $("#normal_account_level").text('3(灰名单用户)');
+                                break;
+                            }
+                            case 6:{
+                                $("#normal_account_level").text('6(验证用户:优质)');
+                                break;
+                            }
+
+
+
                             $("#normal_account_level").text(first['normal_account_level']);
                         }
 
