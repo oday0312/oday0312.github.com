@@ -2,6 +2,12 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+
      <script src="https://cdn.jsdelivr.net/npm/eosjs-ecc@4.0.4/lib/eosjs-ecc.min.js"
     integrity="sha512-dYFDmK/d9r3/NCp6toLtfkwOjSMRBaEzaGAx1tfRItC0nsI0hVLERk05iNBQR7uDNI7ludYhcBI4vUiFHdjsTQ=="
     crossorigin="anonymous"></script>
@@ -247,7 +253,11 @@
     <div  id="userinfoDiv" style="background: white" style="margin-top: 50px;">
         <div class="col-lg-6" style="margin-top: 160px">
             <div class="input-group" >
-                <input id="account" type="text" placeholder="请输入要查询的account" class="form-control">&nbsp;&nbsp;
+                <input id="account"
+                       type="text"
+                       autocapitalize="off"
+                       placeholder="请输入要查询的account"
+                       class="form-control">&nbsp;&nbsp;
                     <span class="input-group-btn">
                         <button class="btn btn-primary"  onclick="EOSCheckAccount()" type="button">EOS</button>
                     </span>
@@ -300,3 +310,5 @@
 
 </body>
 </html>
+
+
