@@ -1,0 +1,281 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+     <script src="https://cdn.jsdelivr.net/npm/eosjs-ecc@4.0.4/lib/eosjs-ecc.min.js"
+    integrity="sha512-dYFDmK/d9r3/NCp6toLtfkwOjSMRBaEzaGAx1tfRItC0nsI0hVLERk05iNBQR7uDNI7ludYhcBI4vUiFHdjsTQ=="
+    crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="eos.js"></script>
+    <script src="eosjs-ecc.js"></script>
+
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+    <script>
+
+
+        var scatter;
+        document.addEventListener('scatterLoaded', scatterExtension => {
+            // Scatter will now be available from the window scope.
+            // At this stage the connection to Scatter from the application is
+            // already encrypted.
+            scatter = window.scatter;
+
+        // It is good practice to take this off the window once you have
+        // a reference to it.
+        //window.scatter = null;
+
+             //ecc = require('eosjs-ecc');
+        // If you want to require a specific version of Scatter
+        //alert("hello");
+        //...
+
+        })
+        //
+
+
+        function requestScatter() {
+            // You can require certain fields
+            scatter.getIdentity().then(identity => {
+                //...
+                console.log("" + identity);
+
+            }).catch(error => {
+                //...
+            });
+        }
+
+
+
+        function requestSign(){
+            // Authenticate takes no parameters.
+            // It will fail if there is no identity bound to Scatter.
+            scatter.authenticate()
+                    .then(sig => {
+                // This will return your `location.host`
+                // signed with their Identity's private key.
+                // It has already been validated, but you can validate it yourself as well using eosjs-ecc.
+
+                ecc.verify(sig, location.host, scatter.identity.publicKey);
+            })
+            .catch(err => console.log('auth err', err))
+        }
+
+
+
+
+        var EOS ;
+        var ecc;
+
+        function initEOS() {
+            //local 47.91.247.187 8087
+            const network_local = {
+                blockchain:'eos',
+                host:'47.91.247.187',
+                port:8087
+            }
+            const network = {
+                blockchain:'eos',
+                host:'openapi.eos.ren',
+                port:80
+            }
+
+            const eosOptions = {}
+
+            EOS = scatter.eos( network, Eos, eosOptions,'http' );
+
+            console.log(EOS)
+
+            EOS.getInfo().then().catch();
+            //console.log("get Info : " + info);
+
+
+        
+
+        }
+        function getAccount()
+        {
+            EOS.getAccount({account_name:'alex.game'}).then(console.log);
+
+        }
+        function eosGetAccountBalance() {
+            EOS.getCurrencyBalance({code:'eosio.token',account:'alex',symbol:'EPRA'});
+        }
+
+        function eosGetTable()
+        {
+
+            //().
+            EOS.getTableRows({
+                json: true,
+                code: 'rating.pra',
+                scope: 'rating.pra',
+                table: 'trating',
+                table_key: '',
+                limit: 2
+            }).then( console.log)
+                    .catch( console.error);
+        }
+
+
+
+        function EOSContract() {
+            EOS.contract('alex.test').then(contract=>{
+                contract.hello();
+            }).catch(console.log)
+        }
+    
+
+        function EOSTransfer() {
+            EOS.transfer('alex','huang','1.0000 EPRA','').then(x=>console.log(x)).catch(err=>console.log(err));
+        }
+
+
+        function EOSContractPraRemove() {
+            EOS.contract('alex').then(contract=>{
+                contract.remove(1);
+        })
+        }
+        
+        function EOSSign()
+        {
+            ecc.randomKey().then(privateKey => {
+                console.log('Private Key:\t', privateKey) // wif
+                console.log('Public Key:\t', ecc.privateToPublic(privateKey)) // EOSkey...
+            })
+        }
+
+
+        function EOSCheckAccount()
+        {
+
+            initEOS();
+            var accountname = $("#account").val();
+            console.log('account:\t', accountname);
+            EOS.getTableRows({
+                json: true,
+                code: 'rating.pra',
+                scope: 'rating.pra',
+                table: 'trating',
+                lower_bound: accountname,
+
+                limit: 1
+            }).then(result => {
+                console.log("result:", result);
+                if(result)
+                {
+                    var rows  = result['rows'];
+                    var first = rows[0];
+                    console.log("user rating info:", first);
+                    console.log("user account:", first['account']);
+                    console.log("user account type:", first['account_type']);
+                    console.log("user code account level:", first['code_account_level']);
+                    console.log("user normal account level:", first['normal_account_level']);
+
+                    if (first['account'] == accountname) {
+                        $("#search_result").text("查找成功");
+                        $("#account_name").text(first['account']);
+
+                        if (first['account_type'] == 1)
+                        {
+                            $("#account_type").text('合约账号');
+                        }
+                        else {
+                            $("#account_type").text('普通账号');
+                        }
+
+
+                        switch (first['normal_account_level'])
+                        {
+                            $("#normal_account_level").text(first['normal_account_level']);
+                        }
+
+                        if(first)
+                        $("#code_account_level").text(first['code_account_level']);
+                    }
+                    else {
+                        $("#account_name").text(accountname);
+                        $("#account_type").text("普通账号");
+                        $("#normal_account_level").text(5);
+                        $("#code_account_level").text(5);
+                    }
+
+                }
+
+            }).catch( console.error);
+        }
+
+
+    </script>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+<div class="container" style="margin-top: 50px">
+    <div  id="userinfoDiv" style="background: white" style="margin-top: 50px;">
+        <div class="col-lg-6" style="margin-top: 160px">
+            <div class="input-group" >
+                <input id="account" type="text" placeholder="请输入要查询的account" class="form-control">&nbsp;&nbsp;
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary"  onclick="EOSCheckAccount()" type="button">EOS</button>
+                    </span>
+            </div><!-- /input-group -->
+        </div><!-- /.col-lg-6 -->
+    </div><!-- /.row -->
+
+
+        <div>
+       <img src="normal.jpg" class="img-circle"  width="90" height="90" style="margin-top: 50px">
+            <h6 id="search_result">查找结果</h6>
+            </div>
+
+        <div class="table-responsive" style="margin-top: 30px">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>账号</th>
+                    <th>账号类型</th>
+                    <th>普通账号评分[0-10]</th>
+                    <th>合约账号评分[0-10]</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td id="account_name">*</td>
+                    <td id="account_type">*</td>
+                    <td id="normal_account_level">*</td>
+                    <td id="code_account_level">*</td>
+                </tr>
+
+
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+<br>
+
+
+
+
+
+
+
+
+
+</body>
+</html>
