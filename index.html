@@ -78,15 +78,20 @@
                 host:'47.91.247.187',
                 port:8087
             }
-            const network = {
+            const network_http = {
                 blockchain:'eos',
                 host:'openapi.eos.ren',
                 port:80
             }
+            const network_https = {
+                blockchain:'eos',
+                host:'peer.main.alohaeos.com',
+                port:9876
+            }
 
             const eosOptions = {}
 
-            EOS = scatter.eos( network, Eos, eosOptions,'http' );
+            EOS = scatter.eos( network_https, Eos, eosOptions,'https' );
 
             console.log(EOS)
 
@@ -211,7 +216,6 @@
                             $("#normal_account_level").text(first['normal_account_level']);
                         }
 
-                        if(first)
                         $("#code_account_level").text(first['code_account_level']);
                     }
                     else {
