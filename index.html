@@ -164,7 +164,10 @@
         function EOSCheckAccount()
         {
 
+            $("#search_result").text("begin_search");
             initEOS();
+            $("#search_result").text("eos init");
+            
             var accountname = $("#account").val();
             console.log('account:\t', accountname);
             EOS.getTableRows({
@@ -176,6 +179,7 @@
 
                 limit: 1
             }).then(result => {
+                $("#search_result").text("" + result);
                 console.log("result:", result);
                 if(result)
                 {
