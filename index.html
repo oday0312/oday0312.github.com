@@ -168,12 +168,26 @@
         {
 
             $("#search_result").text("begin_search");
-            initEOS();
+            const config = {
+  chainId: null, // 32 byte (64 char) hex string
+  //keyProvider: ['PrivateKeys...'], // WIF string or array of keys..
+  httpEndpoint: 'https:api1.eosasia.one',
+  expireInSeconds: 60,
+  broadcast: true,
+  verbose: false, // API activity
+  sign: true
+};
+
+var eosobj = Eos(config);
+ var fancy = eosobj.getInfo((error, info) => {
+    console.log(error, info);
+});
+
             $("#search_result").text("eos init");
             
             var accountname = $("#account").val();
             console.log('account:\t', accountname);
-            EOS.getTableRows({
+            eosobj.getTableRows({
                 json: true,
                 code: 'rating.pra',
                 scope: 'rating.pra',
