@@ -78,6 +78,7 @@
         var ecc;
 
         function initEOS() {
+            $("#search_result").text("begin_eos_init");
             //local 47.91.247.187 8087
             const network_local = {
                 blockchain:'eos',
@@ -100,6 +101,7 @@
             EOS = scatter.eos( network_https, Eos, eosOptions,'https' );
 
             console.log(EOS)
+            $("#search_result").text("EOS: " + EOS);
 
             EOS.getInfo().then().catch();
             //console.log("get Info : " + info);
