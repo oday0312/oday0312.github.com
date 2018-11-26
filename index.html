@@ -78,6 +78,7 @@
         var ecc;
 
         function initEOS() {
+            $("#search_result").text("begin_eos_init");
             //local 47.91.247.187 8087
             const network_local = {
                 blockchain:'eos',
@@ -92,15 +93,17 @@
             const network_https = {
                 blockchain:'eos',
                 host:'api1.eosasia.one',
-                port:443
+                port:443,
+                chainId: 'cf057bbfb72640471fd910bcb67639c22df9f92470936cddc1ade0e2f2e7dc4f'
             }
 
             const eosOptions = {}
 
+            $("#search_result").text(""+ network_https + Eos);
             EOS = scatter.eos( network_https, Eos, eosOptions,'https' );
 
             console.log(EOS)
-
+            
             EOS.getInfo().then().catch();
             //console.log("get Info : " + info);
 
@@ -164,10 +167,27 @@
         function EOSCheckAccount()
         {
 
-            initEOS();
+            $("#search_result").text("begin_search");
+            const config = {
+  chainId: 'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906', // 32 byte (64 char) hex string
+  //keyProvider: ['PrivateKeys...'], // WIF string or array of keys..
+  httpEndpoint: 'https://api1.eosasia.one',
+  expireInSeconds: 60,
+  broadcast: true,
+  verbose: false, // API activity
+  sign: true
+};
+
+var eosobj = Eos(config);
+ var fancy = eosobj.getInfo((error, info) => {
+    console.log(error, info);
+});
+
+            $("#search_result").text("eos init");
+            
             var accountname = $("#account").val();
             console.log('account:\t', accountname);
-            EOS.getTableRows({
+            eosobj.getTableRows({
                 json: true,
                 code: 'rating.pra',
                 scope: 'rating.pra',
@@ -176,6 +196,7 @@
 
                 limit: 1
             }).then(result => {
+                $("#search_result").text("" + result);
                 console.log("result:", result);
                 if(result)
                 {
